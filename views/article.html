@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block main %}
+<span id="post-id" style="visibility:hidden">{{ post.id }}</span>
+<div class="card">
+    <div class="card-header">{{ post.title }}</div>
+    <div class="card-body">
+        <span class="date">{{ post.date }}</span>
+        <div class="tags">
+            {% for t in tags %}
+            <span class="tag"><a href="/tags">{{ t }}</a></span>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="card-body">{{ post.content | safe }}
+    </div>
+</div>
+<div style="font-size:12px">
+    <div id="comments-board"></div>
+    <a class="btn" href="#pre">上一页</a>
+    <a class="btn" href="#next">下一页</a>
+    <span>第<span id="current-page"></span>页，共<span id="total-page"></span>页</span>
+</div>
+<div class="panel">
+    <div class="panel-header">发表评论</div>
+    <div class="panel-body">
+        <p><input class="form-control" type="text" name="user" placeholder="留下您的昵称"></p>
+        <p><input class="form-control" type="text" name="email" placeholder="Email，发表评论后仅管理员有权查看"></p>
+        <textarea class="form-control" placeholder="您的留言"></textarea>
+        <input class="btn" type="button" value="发表">
+    </div>
+</div>
+<script src="/js/article.js"></script>
+{% endblock %}

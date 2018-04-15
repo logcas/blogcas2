@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block main %}
+<div class="panel">
+    <div class="panel-header">文章列表</div>
+    <div class="panel-body">
+        <div id="posts-list">
+            <span id="post-loading-text">正在加载中...</span>
+        </div>
+        <a class="btn" href="#pre">上一页</a>
+        <a class="btn" href="#next">下一页</a>
+        <span>第<span id="current"></span>页，共<span id="total"></span>页</span>
+    </div>
+</div>
+<script src="/js/posts.js"></script>
+{% endblock %}

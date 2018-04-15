@@ -1,0 +1,378 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration-line: none;
+    color: #000000;
+}
+
+a:hover {
+    color: #03A9F4;
+}
+
+/* mainColor #03A9F4
+*/
+
+.header {
+    height: 60px;
+    width: 100%;
+    position: fixed;
+    background: rgba(3,169,244,0.8);
+    box-shadow: 2px 0px 10px #03A9F4;
+    z-index: 999;
+    transition-duration: 1s;
+}
+
+.header.scrollHeader {
+    background: rgba(3,169,244,0.8);
+    box-shadow: 2px 0px 10px #03A9F4;
+}
+
+.header-content {
+    max-width: 1024px;
+    margin: 0 auto;
+}
+
+.header .brand {
+    display: block;
+    float: left;
+    margin-left: 10px;
+    line-height: 60px;
+    font-size: 36px;
+    font-weight: 200;
+    color: #ffffff;
+}
+
+.header .nav {
+    display: block;
+    float: right;
+    margin-right: 10px;
+    height: 60px;
+    list-style: none;
+}
+
+.header .nav li {
+    display: block;
+    float: left;
+    line-height: 57px;
+    padding: 0 15px;
+}
+
+.header .nav li:hover {
+    border-width: 0 0 3px 0;
+    border-color: #ffffff;
+    border-style: solid;
+    background: rgb(48, 179, 240);
+}
+
+.header .nav li a {
+    font-size: 16px;
+    font-weight: 900;
+    color: #ffffff;
+}
+
+.collapse {
+    visibility: hidden;
+}
+
+.container {
+    position: relative;
+    top: 60px;
+    width: 100%;
+}
+
+.content {
+    max-width: 1024px;
+    margin: 0 auto;
+    overflow: auto;
+}
+
+.card {
+    margin: 10px;
+    border-width: 0 0 1px 0;
+    border-color: #EEEEEE;
+    border-style: solid;
+}
+
+.card .card-header {
+    padding: 10px 0px;
+    font: 24px bold 微软雅黑;
+    border-width: 0 0 5px 0;
+    border-style: solid;
+    border-color: #03A9F4;
+    margin: 5px;
+}
+
+.card .card-header a{
+    font: 24px bold 微软雅黑;
+    color: #000000;
+}
+
+.card .card-header a:hover{
+    color: #03A9F4;
+}
+
+
+.card .card-body {
+    width: 100%;
+    padding: 10px 0px;
+    margin: 5px;
+    color: #818181;
+    overflow: auto;
+}
+
+.card .card-body .date {
+    display: block;
+    float: left;
+    font: 12px;
+    color: #818181;
+}
+
+.card .card-body .tags {
+    float: right;
+}
+
+.card .card-body .tags .tag {
+    font-size: 12px;
+    margin: 0 5px;
+}
+
+.panel {
+    margin: 10px;
+    border-width: 2px;
+    border-color: #EEEEEE;
+    border-style: solid;
+    box-shadow: 3px 3px 20px #EEEEEE;
+}
+
+.panel .panel-header {
+    margin: 10px;
+    font-size: 16px;
+    font-weight: 900;
+}
+
+.panel .panel-body {
+    margin: 10px;
+    font: 12px bold 微软雅黑;
+}
+
+.tag {
+    display: inline-block;
+    background: #03A9F4;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 5px;
+}
+
+.tag a{
+    color: #ffffff;
+}
+
+.footer {
+    max-width: 1024px;
+    margin: 0 auto;
+    border-width: 1px 0 0 0;
+    border-color: #EEEEEE;
+    border-style: solid;
+    line-height: 60px;
+    font-size: 14px;
+    text-align: center;
+    color: #818181;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+table tbody tr {
+    border-width: 1px 0;
+    border-color: #EEEEEE;
+    border-style: solid;
+    line-height: 40px;
+}
+
+table tbody tr:hover {
+    background: #eeeeee;
+}
+
+table tbody tr a{
+    font-size: 16px;
+    font-family: 微软雅黑;
+    color: #000000;
+}
+
+table tbody tr td:last-child {
+    float: right;
+}
+
+.btn {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 5px;
+}
+
+.btn:hover {
+    background: #EEEEEE;
+    box-shadow: 2px 2px 5px #eeeeee;
+}
+
+input.form-control {
+    height: 30px;
+    width: 300px;
+    border-width: 0 0 2px 0;
+    border-style: solid;
+    border-color: #eeeeee;
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #03A9F4;
+
+}
+
+textarea.form-control {
+    width: 100%;
+    height: 100px;
+    border-width: 0 0 2px 0;
+    border-style: solid;
+    border-color: #eeeeee;
+    font-size: 14px;
+    margin: 5px 0;
+    resize: none;
+}
+
+input[type="button"].btn {
+    border-width: 0;
+    border-style: none;
+    background: #ffffff;
+}
+
+input[type="button"].btn:hover {
+    background: #eeeeee;
+    cursor: pointer;
+    color: #03A9F4;
+}
+
+input[type="button"].btn:focus {
+    outline: none;
+    background: #cac8c8;
+}
+
+.comment .comment-user {
+    display: inline-block;
+    margin: 10px 10px 0px 10px;
+    padding: 0 0 5px 0;
+    border-width: 0 0 2px 0;
+    border-color: #03A9F4;
+    border-style: solid;
+    color: #000000;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.comment .comment-content {
+    display: block;
+    margin: 0px 10px;
+    padding: 10px;
+    color: #818181;
+    font-size: 14px;
+}
+
+/*
+
+针对大屏幕设备
+
+*/
+
+@media screen and (min-width:750px) {
+    .content .left-component {
+        float: left;
+        width: 33%;
+    }
+
+    .content .right-component {
+        float: left;
+        width: 66%;
+    }
+}
+
+
+
+/*
+
+移动设备自适应
+
+*/
+@media screen and (max-width:750px) {
+    .header .nav {
+        visibility: hidden;
+
+        display: block;
+        list-style: none;
+        position: absolute;
+        margin: 0;
+        width: 100%;
+        top: 60px;
+        left: -10px;
+    }
+
+    .header .nav li {
+        display: block;
+        width: 100%;
+        line-height: 40px;
+        border-width: 0 0 1px 0;
+        border-color: #82B1FF;
+        border-style: solid;
+        background: #BBDEFB;
+    }
+
+    .header .nav li:hover{
+        background: #64B5F6;
+        border-width: 0 0 1px 0;
+    }
+
+    .header .nav li a{
+        color: #000000;
+    }
+
+    .header .nav li:hover a {
+        color: #ffffff;
+    }
+
+    .collapse {
+        visibility: visible;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        float: right;
+        margin-right: 30px;
+        padding: 10px 0;
+    }
+
+    .collapse .line {
+        width: 40px;
+        height: 5px;
+        margin: 5px;
+        background: #ffffff;
+    }
+
+    .content .left-component {
+        float: left;
+        width: 100%;
+        display: none;
+    }
+
+    .content .right-component {
+        float: left;
+        width: 100%;
+
+    }
+    
+}

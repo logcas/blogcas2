@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block main %}
+<div class="left-component">
+    <div class="panel">
+        <div class="panel-header">About</div>
+        <img src="/img/touxiang.jpg" width="100%" height="100%">
+        <div class="panel-body">Here is self introduction</div>
+    </div>
+    <div class="panel">
+        <div class="panel-header">Tags</div>
+        <div class="panel-body" id="tags-list">
+            <span id="tag-loading-text">正在加载中.....</span>
+        </div>
+    </div>
+</div><!--left-->
+
+<div class="right-component" id="posts-list">
+    <span id="post-loading-text">正在加载中......</span>
+</div><!--right-->
+<script src="/js/index.js"></script>
+{% endblock %}

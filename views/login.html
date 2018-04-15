@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block main %}
+<div class="panel" style="height:200px;width:400px;margin:20px auto;">
+    <div class="panel-header">Login</div>
+    <div class="panel-body">
+        <p><input style="width:100%" class="form-control" type="text" placeholder="Username" name="username"></p>
+        <p><input style="width:100%" class="form-control" type="password" placeholder="Password" name="password"></p>
+        <input id="login" class="btn" type="button" value="登入后台">
+    </div>
+</div>
+<script src="/js/login.js"></script>
+{% endblock%}
