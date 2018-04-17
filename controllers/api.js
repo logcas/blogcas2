@@ -3,6 +3,28 @@ const db = require('../models/db');
 
 // api
 
+// 提交评论
+async function publishComment(ctx,next) {
+    var { username,email,content,postID } = ctx.request.body;
+    var date = getDate();
+    var id = parseInt((await db.getSum('comments'))[0].sum + 1);
+    postID = parseInt(postID);
+    var params = [postID,id,username,content,email,date];
+    console.log(params);
+    try{
+        await db.addComment(params);
+        ctx.body = {
+            done:true
+        };
+    } catch(e) {
+        console.log('error:' + e);
+        ctx.body = {
+            done:false
+        }
+    }
+}
+
+// 获取文章、评论总数
 async function getSum(ctx,next) {
     try {
         var sum = 0;
@@ -103,16 +125,9 @@ async function publishPost(ctx,next) {
 
 async function testMysql(ctx,next) {
     try{
-        var rows = await db.getTags();
-        if(rows.length==0){
-            ctx.body = '空';
-        }
-        var tags = [];
-        rows.forEach(row=>{
-            tags.push(row.tags);
-        });
-        tags = [...new Set(tags.join(',').split(','))];
-        ctx.body = tags;
+        var params = [1,1,'Lucas','testcomments','123456@qq.com','2018/04/17'];
+        await db.addComment(params);
+        ctx.body = '插入成功';
     } catch (e) {
         console.log('error:' + e);
         ctx.body = '测试失败';
@@ -149,6 +164,11 @@ module.exports = {
         method:'GET',
         url:'/api/getsum',
         func:getSum
+    },
+    publishComment:{
+        method:'POST',
+        url:'/api/publishcomment',
+        func:publishComment
     },
     testMysql:{
         method:'GET',

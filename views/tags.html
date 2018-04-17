@@ -3,15 +3,7 @@
 <div class="panel">
     <div class="panel-header">按标签显示文章</div>
     <div class="panel-body">
-        <span class="tag"><a href="#cpp">C++</a></span>
-        <span class="tag"><a href="#java">Java</a></span>
-        <span class="tag"><a href="#python">Python</a></span>
-        <span class="tag"><a href="#cpp">C++</a></span>
-        <span class="tag"><a href="#java">Java</a></span>
-        <span class="tag"><a href="#python">Python</a></span>
-        <span class="tag"><a href="#cpp">C++</a></span>
-        <span class="tag"><a href="#java">Java</a></span>
-        <span class="tag"><a href="#python">Python</a></span>
+        <div id="tags"></div>
         <table>
             <tbody>
                 <tr>
@@ -34,7 +26,7 @@
         </table>
         <a class="btn" href="#pre">上一页</a>
         <a class="btn" href="#next">下一页</a>
-        <span>第1页，共20页</span>
+        <span>第<span id="current"></span>页，共<span id="total"></span>页</span>
     </div>
 </div>
 <script src="/js/tags.js"></script>

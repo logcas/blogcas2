@@ -120,7 +120,7 @@
         var postTitle = document.createElement('div');
         postTitle.classList.add('card-header');
         var link = document.createElement('a');
-        link.setAttribute('href', '/posts/' + po.id);
+        link.setAttribute('href', '/post/' + po.id);
         link.appendChild(document.createTextNode(po.title));
         postTitle.appendChild(link);
 
