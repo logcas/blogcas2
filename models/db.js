@@ -8,14 +8,19 @@ function getTags() {
 function getComments(postID, start, sum) {
     var queryStart = start || 0;
     var querySum = sum || 5;
-    var query = `select * from comments where postID=${postID} order by id limit ${queryStart},${querySum};`;
+    var query = `select * from comments where postID=${postID} order by id desc limit ${queryStart},${querySum};`;
     return queryFunc(query);
 }
 
 function getPosts(start, sum) {
     var queryStart = start || 0;
     var querySum = sum || 10;
-    var query = `select * from posts order by id limit ${queryStart},${querySum};`;
+    var query = `select * from posts order by id desc limit ${queryStart},${querySum};`;
+    return queryFunc(query);
+}
+
+function getPostsByTag(tagName) {
+    var query = `select * from posts where tags like '%${tagName}%' order by id desc`;
     return queryFunc(query);
 }
 
@@ -127,5 +132,6 @@ module.exports = {
     getComments: getComments,
     getTags: getTags,
     addComment:addComment,
-    testMysql:testMysql
+    testMysql:testMysql,
+    getPostsByTag:getPostsByTag
 }

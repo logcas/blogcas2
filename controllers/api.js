@@ -53,6 +53,13 @@ async function getPostList(ctx,next) {
     ctx.body = postList;
 }
 
+// 按标签和页码获取文章列表
+async function getPostsByTag(ctx,next) {
+    var tagName = ctx.query.tag;
+    var postList = await db.getPostsByTag(tagName);
+    ctx.body = postList;
+}
+
 // 获取文章评论
 async function getComments(ctx,next) {
     const sum = 5; // 一次获取评论的数量
@@ -174,5 +181,10 @@ module.exports = {
         method:'GET',
         url:'/api/test',
         func:testMysql
+    },
+    getPostsByTag:{
+        method:'GET',
+        url:'/api/getpostsbytag',
+        func:getPostsByTag
     }
 }

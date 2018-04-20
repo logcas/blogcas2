@@ -54,21 +54,19 @@
 
         // 翻页按钮事件处理程序
         $('a[href="#pre"]').click((e) => {
-            insertCommentsList(--currentPage);
-            document.querySelector('#current').innerHTML = currentPage;
-            if (currentPage == 1) {
-                document.querySelector('a[href="#pre"]').style.display = 'none';
+            if(currentPage == 1){
+                alert('这已经是第一页了');
+            } else {
+                insertCommentsList(--currentPage);
             }
-            document.querySelector('a[href="#next"]').style.display = 'inline-block';
         });
 
         $('a[href="#next"]').click((e) => {
-            insertCommentsList(++currentPage);
-            document.querySelector('#current').innerHTML = currentPage;
-            if (currentPage == totalPage) {
-                document.querySelector('a[href="#next"]').style.display = 'none';
+            if(currentPage == totalPage){
+                alert('这已经是最后一页了');
+            } else {
+                insertCommentsList(++currentPage);
             }
-            document.querySelector('a[href="#pre"]').style.display = 'inline-block';
         });
 
         $('input[value="发表"]').click((e) => {
@@ -120,12 +118,6 @@
                 totalPage = parseInt(sum / 6) + 1;
                 document.querySelector('#current').innerHTML = currentPage;
                 document.querySelector('#total').innerHTML = totalPage;
-                document.querySelector('a[href="#pre"]').style.display = 'none';
-                if (currentPage == totalPage) {
-                    document.querySelector('a[href="#next"]').style.display = 'none';
-                } else {
-                    document.querySelector('a[href="#next"]').style.display = 'inline-block';
-                }
             },
             error: function () {
                 console.log('请求页面时发生错误');
