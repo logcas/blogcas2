@@ -44,6 +44,12 @@ async function getSum(ctx,next) {
     }
 }
 
+async function getSumByTag(ctx,next) {
+    var tagName = ctx.query.tag;
+    var sum = (await db.getSumByTag(tagName))[0].sum;
+    ctx.body = sum;
+}
+
 // 获取文章列表（包含标题与概括登信息)，用于首页和文章页
 async function getPostList(ctx,next) {
     const sum = 10; // 一次获取文章的数量
@@ -56,7 +62,14 @@ async function getPostList(ctx,next) {
 // 按标签和页码获取文章列表
 async function getPostsByTag(ctx,next) {
     var tagName = ctx.query.tag;
-    var postList = await db.getPostsByTag(tagName);
+    var page = ctx.query.page;
+    var postList = [];
+    if(page) {
+        postList = await db.getPostsByTag(tagName);
+    } else {
+        var offset = (page-1) * 5;
+        postList = await db.getPostsByTag(tagName,offset);
+    }
     ctx.body = postList;
 }
 
@@ -106,17 +119,17 @@ async function loginAdmin(ctx,next) {
 
 // 发表文章/保存草稿
 async function publishPost(ctx,next) {
-    var _id = await db.getPostsSum();  // 获得序号
-    var post = {
-        id:_id,
-        title:ctx.body.title,
-        content:ctx.body.content,
-        tags:ctx.body.tags.trim(),
-        isPrivate:ctx.body.private,
-        date:getDate()
-    };
+    var _id = (await db.getSum('posts'))[0].sum + 1;  // 获得序号
+    var params = [
+        _id,
+        ctx.request.body.title,
+        ctx.request.body.content,
+        ctx.request.body.tags.trim(),
+        getDate(),
+        ctx.request.body.isPrivate
+    ]
     try{
-        if(await db.addPost(post)){
+        if(await db.addPost(params)){
             ctx.body = {
                 done:true
             };
@@ -186,5 +199,10 @@ module.exports = {
         method:'GET',
         url:'/api/getpostsbytag',
         func:getPostsByTag
+    },
+    getSumByTag:{
+        method:'GET',
+        url:'/api/getsumbytag',
+        func:getSumByTag
     }
 }

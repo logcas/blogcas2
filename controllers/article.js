@@ -1,4 +1,5 @@
 const db = require('../models/db');
+const marked = require('marked');
 
 async function index(ctx, next) {
     var id = ctx.params.id;
@@ -6,6 +7,7 @@ async function index(ctx, next) {
     if (post.length != 0) {
         post = post[0];
         post.tags = post.tags.split(',');
+        post.content = marked(post.content);
         ctx.render('article.html', {
             pagename: post.title,
             post: post,

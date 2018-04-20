@@ -3,17 +3,15 @@
 <div id="function-group">
     <input id="search-box" type="text" class="form-control search" placeholder="Search.."> 
     <div>
-        <a class="btn" href="#">新建文章</a>
+        <a class="btn" href="/admin/posts/publish">新建文章</a>
         <input class="btn error" type="button" value="删除文章">
     </div>  
 </div>
 <div class="panel">
     <div class="panel-header">文章列表</div>
-    <div class="panel-body">
+    <div id="post-panel" class="panel-body">
         <a href="#" class="tag">全部</a>
-        <a href="#" class="tag">C++</a>
-        <a href="#" class="tag">Java</a>
-            <table class="table-hover">
+            <table id="post-list" class="table-hover">
                     <thead>
                         <th style="width:40px">选择</th>
                         <th>标题</th>
@@ -33,48 +31,14 @@
                                 <td style="width:40px;float: right;"><a href="#">编辑</a></td>
                                 <td style="width:90px;float: right;">2018/04/01</td>
                             </tr>
-                            <tr>
-                                    <td><input type="checkbox" name="posts" value="1"></td>
-                                    <td>文章标题标题标题1</td>
-                                    <td style="width:40px;float: right;"><a href="#">编辑</a></td>
-                                    <td style="width:90px;float: right;">2018/04/01</td>
-                                </tr>
-                                <tr>
-                                        <td><input type="checkbox" name="posts" value="1"></td>
-                                        <td>文章标题标题标题1</td>
-                                        <td style="width:40px;float: right;"><a href="#">编辑</a></td>
-                                        <td style="width:90px;float: right;">2018/04/01</td>
-                                    </tr>
-                                    <tr>
-                                            <td><input type="checkbox" name="posts" value="1"></td>
-                                            <td>文章标题标题标题1</td>
-                                            <td style="width:40px;float: right;"><a href="#">编辑</a></td>
-                                            <td style="width:90px;float: right;">2018/04/01</td>
-                                        </tr>
-                                        <tr>
-                                                <td><input type="checkbox" name="posts" value="1"></td>
-                                                <td>文章标题标题标题1</td>
-                                                <td style="width:40px;float: right;"><a href="#">编辑</a></td>
-                                                <td style="width:90px;float: right;">2018/04/01</td>
-                                            </tr>
-                                            <tr>
-                                                    <td><input type="checkbox" name="posts" value="1"></td>
-                                                    <td>文章标题标题标题1</td>
-                                                    <td style="width:40px;float: right;"><a href="#">编辑</a></td>
-                                                    <td style="width:90px;float: right;">2018/04/01</td>
-                                                </tr>
-                                                <tr>
-                                                        <td><input type="checkbox" name="posts" value="1"></td>
-                                                        <td>文章标题标题标题1</td>
-                                                        <td style="width:40px;float: right;"><a href="#">编辑</a></td>
-                                                        <td style="width:90px;float: right;">2018/04/01</td>
-                                                    </tr>
                     </tbody>
                 </table>
                 <div class="page-tags">
-                        <span class="page-tag"><a href="#">下一页</a></span>
-                        <span class="page-tag"><a href="#">上一页</a></span>
+                        <span class="page-tag"><a href="#pre">上一页</a></span>
+                        <span class="page-tag"><a href="#next">下一页</a></span>
+                        <span>第<span id="current"></span>页，共<span id="total"></span>页</span>
                 </div>
     </div>
 </div>
+<script src="/js/adminpost.js"></script>
 {% endblock %}

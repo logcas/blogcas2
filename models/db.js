@@ -19,8 +19,13 @@ function getPosts(start, sum) {
     return queryFunc(query);
 }
 
-function getPostsByTag(tagName) {
-    var query = `select * from posts where tags like '%${tagName}%' order by id desc`;
+function getPostsByTag(tagName, offset) {
+    var query = '';
+    if (offset) {
+        query = `select * from posts where tags like '%${tagName}%' order by id desc limit ${offset},5`;
+        return queryFunc(query);
+    }
+    query = `select * from posts where tags like '%${tagName}%' order by id desc`;
     return queryFunc(query);
 }
 
@@ -29,10 +34,30 @@ function getAdmin() {
     return queryFunc(query);
 }
 
-function addPost(post) {
-    var query = 'insert into posts'
-        + `value(${post.id},${post.title},${post.content},${post.tags},${post.date});`;
-    return queryFunc(query);
+function addPost(params) {
+    return new Promise((resolve, reject) => {
+        var connection = mysql.createConnection({
+            host: 'localhost',
+            user: 'root',
+            password: '3321666',
+            database: 'blogcas'
+        });
+        connection.connect((err) => {
+            if (err) {
+                console.log(err);
+                throw new Error('连接数据库时出错');
+            }
+            connection.query('INSERT INTO posts(id,title,content,tags,publishDate,isPrivate) VALUES(?,?,?,?,?,?)'
+                , params
+                , function (err, result, fields) {
+                    if (err) {
+                        console.log(err);
+                        throw new Error('插入失败');
+                    }
+                    resolve(true);
+                });
+        });
+    });
 }
 
 function addComment(params) {
@@ -49,19 +74,19 @@ function addComment(params) {
                 throw new Error('连接数据库时出错');
             }
             connection.query('INSERT INTO comments(postid,id,username,content,email,publishdate) VALUES(?,?,?,?,?,?)'
-                ,params
-                ,function(err,result,fields){
-                if(err) {
-                    console.log(err);
-                    throw new Error('插入失败');
-                }
-                resolve(true);
-            });
+                , params
+                , function (err, result, fields) {
+                    if (err) {
+                        console.log(err);
+                        throw new Error('插入失败');
+                    }
+                    resolve(true);
+                });
         });
     });
 }
 
-function testMysql(params){
+function testMysql(params) {
     return new Promise((resolve, reject) => {
         var connection = mysql.createConnection({
             host: 'localhost',
@@ -75,14 +100,14 @@ function testMysql(params){
                 throw new Error('连接数据库时出错');
             }
             connection.query('INSERT INTO test(id,text) VALUES(?,?)'
-                ,params
-                ,function(err,result,fields){
-                if(err) {
-                    console.log(err);
-                    throw new Error('插入失败');
-                }
-                resolve(true);
-            });
+                , params
+                , function (err, result, fields) {
+                    if (err) {
+                        console.log(err);
+                        throw new Error('插入失败');
+                    }
+                    resolve(true);
+                });
         });
     });
 }
@@ -94,6 +119,11 @@ function getPost(id) {
 
 function getSum(table) {
     var query = `select count(*) as sum from ${table}`;
+    return queryFunc(query);
+}
+
+function getSumByTag(tagName) {
+    var query = `select count(*) as sum from posts where tags like '%${tagName}%'`;
     return queryFunc(query);
 }
 
@@ -131,7 +161,8 @@ module.exports = {
     getPosts: getPosts,
     getComments: getComments,
     getTags: getTags,
-    addComment:addComment,
-    testMysql:testMysql,
-    getPostsByTag:getPostsByTag
+    addComment: addComment,
+    testMysql: testMysql,
+    getPostsByTag: getPostsByTag,
+    getSumByTag: getSumByTag
 }
