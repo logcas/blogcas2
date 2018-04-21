@@ -5,11 +5,11 @@ const db = require('../models/db');
 
 // 提交评论
 async function publishComment(ctx,next) {
-    var { username,email,content,postID } = ctx.request.body;
+    var { username,email,content,postID,postTitle } = ctx.request.body;
     var date = getDate();
     var id = parseInt((await db.getSum('comments'))[0].sum + 1);
     postID = parseInt(postID);
-    var params = [postID,id,username,content,email,date];
+    var params = [postID,postTitle,id,username,content,email,date];
     console.log(params);
     try{
         await db.addComment(params);
@@ -75,17 +75,15 @@ async function getPostsByTag(ctx,next) {
 
 // 获取文章评论
 async function getComments(ctx,next) {
-    const sum = 5; // 一次获取评论的数量
     var postID = ctx.query.postID || '';
     var page = ctx.query.page;
-    var offset = (page-1)*sum;
     if(postID==''){
-        ctx.body = [];
+        var comments = await db.getComments(postID,page);
+        ctx.body = comments;
     } else {
-        var comments = await db.getComments(postID,offset,sum);
+        var comments = await db.getComments(postID,page);
         ctx.body = comments;
     }
-    
 }
 
 // 获取所有标签
@@ -127,7 +125,7 @@ async function publishPost(ctx,next) {
         ctx.request.body.tags.trim(),
         getDate(),
         ctx.request.body.isPrivate
-    ]
+    ];
     try{
         if(await db.addPost(params)){
             ctx.body = {
@@ -139,6 +137,56 @@ async function publishPost(ctx,next) {
         ctx.body = {
             done:false,
             err:'发生错误'
+        };
+    }
+}
+
+// 修改文章/修改草稿请求
+async function editPost(ctx,next) {
+    var params = [
+        ctx.request.body.title,
+        ctx.request.body.content,
+        ctx.request.body.tags.trim(),
+        ctx.request.body.isPrivate,
+        ctx.request.body.id
+    ];
+    if(await db.editPost(params)){
+        ctx.body = {
+            done:true
+        };
+    } else {
+        ctx.body = {
+            done:false
+        };
+    }
+}
+
+// 删除文章
+async function deletePosts(ctx,next) {
+    var postids = '(' + ctx.request.body.arr.join(',') + ')';
+    console.log(postids);
+    if(await db.deleteSome('posts',postids)){
+        ctx.body = {
+            done:true
+        };
+    } else {
+        ctx.body = {
+            done:false
+        };
+    }
+}
+
+// 删除评论
+async function deleteComments(ctx,next) {
+    var commentids = '(' + ctx.request.body.arr.join(',') + ')';
+    console.log(commentids);
+    if(await db.deleteSome('comments',commentids)){
+        ctx.body = {
+            done:true
+        };
+    } else {
+        ctx.body = {
+            done:false
         };
     }
 }
@@ -204,5 +252,20 @@ module.exports = {
         method:'GET',
         url:'/api/getsumbytag',
         func:getSumByTag
+    },
+    editPost:{
+        method:'POST',
+        url:'/api/editpost',
+        func:editPost
+    },
+    deletePosts:{
+        method:'POST',
+        url:'/api/deleteposts',
+        func:deletePosts
+    },
+    deleteComments:{
+        method:'POST',
+        url:'/api/deletecomments',
+        func:deleteComments
     }
 }

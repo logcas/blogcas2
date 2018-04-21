@@ -3,10 +3,12 @@
     var currentPage = 1; // 保存当前页码
     var totalPage = null; // 总页面数
     var postID = null; // 文章编号
+    var postTitle = '';
 
     window.onload = function () {
 
         postID = document.querySelector('#post-id').innerHTML;
+        postTitle = document.querySelector('.card-header').innerHTML;
 
         // 移动设备折叠导航
         var navHidden = true;
@@ -69,6 +71,8 @@
             }
         });
 
+
+        // 发表评论事件处理程序
         $('input[value="发表"]').click((e) => {
 
             var username = $('input[name="user"]').val(),
@@ -85,7 +89,8 @@
                         username:username,
                         email:email,
                         content:content,
-                        postID:postID
+                        postID:postID,
+                        postTitle:postTitle
                     },
                     success:function(data){
                         if(data.done){

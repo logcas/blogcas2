@@ -21,10 +21,10 @@
             if (currentPage == 1) {
                 alert('已经是第一页了');
             } else {
-                if(currentTag == null) {
+                if (currentTag == null) {
                     getPostList(--currentPage);
                 } else {
-                    getPostByTag(currentTag,--currentPage);
+                    getPostByTag(currentTag, --currentPage);
                 }
             }
         });
@@ -33,41 +33,74 @@
             if (currentPage == totalPage) {
                 alert('已经是最后一页了');
             } else {
-                if(currentTag == null) {
+                if (currentTag == null) {
                     getPostList(++currentPage);
                 } else {
-                    getPostByTag(currentTag,++currentPage);
+                    getPostByTag(currentTag, ++currentPage);
                 }
             }
         });
 
-        // 标签按钮事件处理程序
+        // 标签按钮/删除按钮事件处理程序
         $('body').click((e) => {
-            var href = e.target.href.slice(e.target.href.indexOf('#')+1);
-            if (href == '') {
-                getPostList(1);
-                getSum();
-                currentTag = null;
-            } else if (typeof e.target.href == 'string') {
-                tagArr.forEach(tag => {
-                    if (tag == href) {
-                        getPostByTag(href);
-                        currentTag = href; // 设置当前选择的tag
-                        getSumByTag(href);
-                        currentPage = 1;
+            if (e.target.href) {
+                var href = e.target.href.slice(e.target.href.indexOf('#') + 1);
+                if (href == '') {
+                    getPostList(1);
+                    getSum();
+                    currentTag = null;
+                } else if (typeof e.target.href == 'string') {
+                    tagArr.forEach(tag => {
+                        if (tag == href) {
+                            getPostByTag(href);
+                            currentTag = href; // 设置当前选择的tag
+                            getSumByTag(href);
+                            currentPage = 1;
+                        }
+                    });
+                }
+            }
+            
+            if(e.target.value == '删除文章') {
+                var posts = document.querySelectorAll('input[name="posts"]');
+                var len = posts.length;
+                var deleteArr = [];
+                for(let i=0;i<len;i++) {
+                    if(posts[i].checked) {
+                        deleteArr.push(Number(posts[i].value));
+                    }
+                }
+                console.log(deleteArr);
+                $.ajax({
+                    url:'/api/deleteposts',
+                    type:'POST',
+                    data:{
+                        arr:deleteArr.slice(0)
+                    },
+                    dataType:'json',
+                    success:function(data){
+                        if(data.done) {
+                            alert('删除成功！');
+                            window.location.reload();
+                        } else {
+                            alert('删除失败');
+                        }
+                    },error:function(){
+                        console.log('删除请求失败');
+                        alert('删除请求失败');
                     }
                 });
             }
+
         });
     }
 
-    function createTableRow(title, id, date) {
+    function createTableRow(title, id, date, isPrivate) {
         var trow = document.createElement('tr'),
             tdSelect = document.createElement('td'),
             tdTitle = document.createElement('td'),
             tdDate = document.createElement('td'),
             tdEdit = document.createElement('td'),
-            tdTitleLink = document.createElement('a'),
             tdCheckBox = document.createElement('input'),
             tdEditLink = document.createElement('a');
 
@@ -76,9 +109,16 @@
         tdCheckBox.type = 'checkbox';
         tdSelect.appendChild(tdCheckBox);
 
-        tdTitleLink.href = `/post/${id}`;
-        tdTitleLink.appendChild(document.createTextNode(title));
-        tdTitle.appendChild(tdTitleLink);
+        if (isPrivate == 0) {
+            var tdTitleLink = document.createElement('a');
+            tdTitleLink.href = `/post/${id}`;
+            tdTitleLink.appendChild(document.createTextNode(title));
+            tdTitle.appendChild(tdTitleLink);
+        } else if (isPrivate == 1) {
+            var tdTitleText = document.createElement('strong');
+            tdTitleText.innerHTML = '【草稿】' + title;
+            tdTitle.appendChild(tdTitleText);
+        }
 
         tdEditLink.href = `/admin/edit?id=${id}`;
         tdEditLink.appendChild(document.createTextNode('编辑'));
@@ -195,7 +235,7 @@
 
                 // 加入新的文章
                 data.forEach((row) => {
-                    tbody.appendChild(createTableRow(row.title, row.id, row.publishDate));
+                    tbody.appendChild(createTableRow(row.title, row.id, row.publishDate, row.isPrivate));
                 });
             },
             error: function () {
@@ -206,14 +246,14 @@
     }
 
     // 按页和tag获取文章
-    function getPostByTag(tagName,page) {
+    function getPostByTag(tagName, page) {
         $.ajax({
             url: '/api/getpostsbytag',
             type: 'GET',
             dataType: 'json',
             data: {
                 tag: tagName,
-                page:page
+                page: page
             },
             success: function (data) {
                 var tbody = document.querySelector('tbody');
@@ -226,7 +266,7 @@
 
                 // 加入新的文章
                 data.forEach((row) => {
-                    tbody.appendChild(createTableRow(row.title, row.id, row.publishDate));
+                    tbody.appendChild(createTableRow(row.title, row.id, row.publishDate, row.isPrivate));
                 });
 
                 document.querySelector('#current').innerHTML = currentPage;

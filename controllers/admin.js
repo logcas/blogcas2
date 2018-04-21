@@ -1,9 +1,11 @@
+const db = require('../models/db');
+
 async function admin(ctx, next) {
     if (!ctx.session.admin) {
         ctx.redirect('/');
     }
     ctx.render('admin.html', {
-        pagename: '后台管理demo'
+        pagename: '后台管理'
     });
 }
 
@@ -12,7 +14,7 @@ async function adminPosts(ctx, next) {
         ctx.redirect('/');
     }
     ctx.render('admin-post.html', {
-        pagename: '后台管理demo'
+        pagename: '文章管理'
     });
 }
 
@@ -21,7 +23,7 @@ async function adminComments(ctx, next) {
         ctx.redirect('/');
     }
     ctx.render('admin-comment.html', {
-        pagename: '后台管理demo'
+        pagename: '评论管理'
     });
 }
 
@@ -30,8 +32,26 @@ async function writePost(ctx, next) {
         ctx.redirect('/');
     }
     ctx.render('admin-write.html', {
-        pagename: '后台管理demo'
+        pagename: '发表文章'
     });
+}
+
+async function editPost(ctx, next) {
+    if (!ctx.session.admin) {
+        ctx.redirect('/');
+    }
+    var id = ctx.query.id;
+    var sum = (await db.getSum('posts'))[0].sum;
+    if (id <= sum) {
+        var post = (await db.getPost(id))[0];
+            ctx.render('admin-edit.html', {
+                pagename: '编辑文章',
+                post:post
+            });
+    } else {
+        ctx.redirect('/');
+    }
+
 }
 
 async function logout(ctx, next) {
@@ -64,5 +84,10 @@ module.exports = {
         method: 'GET',
         url: '/admin/logout',
         func: logout
+    },
+    editPost: {
+        method:'GET',
+        url:'/admin/edit',
+        func:editPost
     }
 }

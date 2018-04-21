@@ -17,26 +17,28 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><input type="checkbox" name="posts" value="1"></td>
+                            <td><input type="checkbox" name="comments" value="1"></td>
                             <td>评论标题标题标题1</td>
                             <td style="width:90px;float: right;">2018/04/01</td>
                         </tr>
                         <tr>
-                                <td><input type="checkbox" name="posts" value="1"></td>
+                                <td><input type="checkbox" name="comments" value="1"></td>
                                 <td>评论标题标题标题1</td>
                                 <td style="width:90px;float: right;">2018/04/01</td>
                             </tr>
                             <tr>
-                                    <td><input type="checkbox" name="posts" value="1"></td>
+                                    <td><input type="checkbox" name="comments" value="1"></td>
                                     <td>评论标题标题标题1</td>
                                     <td style="width:90px;float: right;">2018/04/01</td>
                                 </tr>
                     </tbody>
                 </table>
                 <div class="page-tags">
-                        <span class="page-tag"><a href="#">下一页</a></span>
-                        <span class="page-tag"><a href="#">上一页</a></span>
+                        <span class="page-tag"><a href="#pre">上一页</a></span>
+                        <span class="page-tag"><a href="#next">下一页</a></span>
+                        <span>第<span id="current"></span>页，共<span id="total"></span>页</span>
                 </div>
     </div>
 </div>
+<script src="/js/adminComment.js"></script>
 {% endblock %}

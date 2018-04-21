@@ -5,10 +5,18 @@ function getTags() {
     return queryFunc(query);
 }
 
-function getComments(postID, start, sum) {
-    var queryStart = start || 0;
-    var querySum = sum || 5;
-    var query = `select * from comments where postID=${postID} order by id desc limit ${queryStart},${querySum};`;
+function getComments(postID,page) {
+    var queryStart = 0;
+    var querySum = 5;
+    var query = '';
+    if(postID!='') {
+        queryStart = (page-1)*querySum;
+        query = `select * from comments where postID=${postID} order by id desc limit ${queryStart},${querySum};`;
+    } else {
+        querySum = 10;
+        queryStart = (page-1)*querySum;
+        query = `select * from comments order by id desc limit ${queryStart},${querySum};`;
+    }
     return queryFunc(query);
 }
 
@@ -73,7 +81,7 @@ function addComment(params) {
                 console.log(err);
                 throw new Error('连接数据库时出错');
             }
-            connection.query('INSERT INTO comments(postid,id,username,content,email,publishdate) VALUES(?,?,?,?,?,?)'
+            connection.query('INSERT INTO comments(postid,posttitle,id,username,content,email,publishdate) VALUES(?,?,?,?,?,?,?)'
                 , params
                 , function (err, result, fields) {
                     if (err) {
@@ -127,6 +135,33 @@ function getSumByTag(tagName) {
     return queryFunc(query);
 }
 
+function editPost(params) {
+    return new Promise((resolve, reject) => {
+        var connection = mysql.createConnection({
+            host: 'localhost',
+            user: 'root',
+            password: '3321666',
+            database: 'blogcas'
+        });
+        connection.connect((err) => {
+            if (err) {
+                console.log(err);
+                throw new Error('连接数据库时出错');
+            }
+            connection.query('UPDATE posts set title = ?,content = ?,tags = ?,isPrivate = ? where id = ?'
+                , params
+                , function (err, result, fields) {
+                    if (err) {
+                        console.log(err);
+                        throw new Error('更新失败');
+                    }
+                    console.log(result);
+                    resolve(true);
+                });
+        });
+    });
+}
+
 function queryFunc(query) {
     return new Promise((resolve, reject) => {
         var connection = mysql.createConnection({
@@ -152,6 +187,32 @@ function queryFunc(query) {
     });
 }
 
+function deleteSome(table,params) {
+    return new Promise((resolve, reject) => {
+        var connection = mysql.createConnection({
+            host: 'localhost',
+            user: 'root',
+            password: '3321666',
+            database: 'blogcas'
+        });
+        connection.connect((err) => {
+            if (err) {
+                console.log(err);
+                throw new Error('连接数据库时出错');
+            }
+            connection.query(`delete from ${table} where id in ${params}`
+                , function (err, result, fields) {
+                    if (err) {
+                        console.log(err);
+                        throw new Error('删除失败');
+                    }
+                    console.log(result);
+                    console.log('删除成功');
+                    resolve(true);
+                });
+        });
+    });
+}
 
 module.exports = {
     addPost: addPost,
@@ -164,5 +225,7 @@ module.exports = {
     addComment: addComment,
     testMysql: testMysql,
     getPostsByTag: getPostsByTag,
-    getSumByTag: getSumByTag
+    getSumByTag: getSumByTag,
+    editPost: editPost,
+    deleteSome: deleteSome
 }

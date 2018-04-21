@@ -1,18 +1,18 @@
 async function index(ctx, next) {
     ctx.render('index.html', {
-        pagename: 'Blogcas 2.0 demo Index',
+        pagename: 'Blogcas',
     });
 }
 
 async function posts(ctx, next) {
     ctx.render('posts.html', {
-        pagename: '文章列表 demo'
+        pagename: '文章 - Blogcas'
     });
 }
 
 async function tags(ctx, next) {
     ctx.render('tags.html', {
-        pagename: '标签 demo'
+        pagename: '标签 - Blogcas'
     });
 }
 
