@@ -70,7 +70,8 @@
             type:'GET',
             dataType:'json',
             data:{
-                tag:tagName
+                tag:tagName,
+                isPrivate:0
             },
             success:function(data){
                 var tbody = document.querySelector('tbody');

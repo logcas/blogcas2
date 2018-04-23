@@ -139,6 +139,8 @@
                 data.forEach((row) => {
                     tbody.appendChild(createTableRow(row));
                 });
+
+                document.querySelector('#current').innerHTML = currentPage;
             },
             error: function () {
                 alert('加载文章时发生了错误');

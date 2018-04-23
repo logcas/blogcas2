@@ -7,7 +7,7 @@ const db = require('../models/db');
 async function publishComment(ctx,next) {
     var { username,email,content,postID,postTitle } = ctx.request.body;
     var date = getDate();
-    var id = parseInt((await db.getSum('comments'))[0].sum + 1);
+    var id = parseInt((await db.getID('comments'))[0].id + 1);
     postID = parseInt(postID);
     var params = [postID,postTitle,id,username,content,email,date];
     console.log(params);
@@ -28,13 +28,25 @@ async function publishComment(ctx,next) {
 async function getSum(ctx,next) {
     try {
         var sum = 0;
+        var id = null;
+        if(ctx.query.id) {
+            id = parseInt(ctx.query.id);
+        }
         switch(ctx.query.table){
             case 'posts':{
-                sum = (await db.getSum('posts'))[0].sum;
+                    sum = (await db.getSum('posts'))[0].sum;
                 break;
             }
             case 'comments':{
-                sum = (await db.getSum('comments'))[0].sum;
+                if(typeof id == 'number'){
+                    sum = (await db.getSum('comments',id))[0].sum;
+                    console.log('getsumbyID');
+                    console.log(id);
+                } else {
+                    sum = (await db.getSum('comments'))[0].sum;
+                    console.log('getsum');
+                }
+                break;
             }
         }
         ctx.body = sum;
@@ -54,8 +66,12 @@ async function getSumByTag(ctx,next) {
 async function getPostList(ctx,next) {
     const sum = 10; // 一次获取文章的数量
     var page = ctx.query.page;
+    var isPrivate = null;
+    if(ctx.query.isPrivate) {
+        isPrivate = Number(ctx.query.isPrivate);
+    }
     var offset = (page-1)*sum;
-    var postList = await db.getPosts(offset,10);
+    var postList = await db.getPosts(offset,10,isPrivate);
     ctx.body = postList;
 }
 
@@ -63,12 +79,16 @@ async function getPostList(ctx,next) {
 async function getPostsByTag(ctx,next) {
     var tagName = ctx.query.tag;
     var page = ctx.query.page;
+    var isPrivate = null;
+    if(ctx.query.isPrivate) {
+        isPrivate = Number(ctx.query.isPrivate);
+    }
     var postList = [];
     if(page) {
-        postList = await db.getPostsByTag(tagName);
+        postList = await db.getPostsByTag(tagName,null,isPrivate);
     } else {
         var offset = (page-1) * 5;
-        postList = await db.getPostsByTag(tagName,offset);
+        postList = await db.getPostsByTag(tagName,offset,isPrivate);
     }
     ctx.body = postList;
 }
@@ -117,7 +137,7 @@ async function loginAdmin(ctx,next) {
 
 // 发表文章/保存草稿
 async function publishPost(ctx,next) {
-    var _id = (await db.getSum('posts'))[0].sum + 1;  // 获得序号
+    var _id = (await db.getID('posts'))[0].id + 1;  // 获得序号
     var params = [
         _id,
         ctx.request.body.title,

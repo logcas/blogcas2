@@ -6,6 +6,9 @@ async function index(ctx, next) {
     var post = await db.getPost(id);
     if (post.length != 0) {
         post = post[0];
+        if(post.isPrivate == 1) {
+            ctx.redirect('/forbid');
+        }
         post.tags = post.tags.split(',');
         post.content = marked(post.content);
         ctx.render('article.html', {

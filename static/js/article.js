@@ -115,9 +115,11 @@
     function getComments() {
         $.ajax({
             url: '/api/getSum',
+            type:'GET',
             dataType: 'json',
             data: {
-                table: 'comments'
+                table: 'comments',
+                id:postID
             },
             success: function (sum) {
                 totalPage = parseInt(sum / 6) + 1;

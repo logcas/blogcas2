@@ -28,7 +28,10 @@ async function login(ctx, next) {
             pagename: 'Login'
         });
     }
+}
 
+async function forbiddenPage(ctx,next) {
+    ctx.body = '你无权查看本文章';
 }
 
 module.exports = {
@@ -56,5 +59,10 @@ module.exports = {
         method: 'GET',
         func: login,
         url: '/login'
+    },
+    forbiddenPage: {
+        method: 'GET',
+        func: forbiddenPage,
+        url:'/forbid'
     }
 }

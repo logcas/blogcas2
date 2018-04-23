@@ -285,6 +285,23 @@ input[type="button"].btn:focus {
     font-size: 14px;
 }
 
+pre {
+    width: 98%;
+    padding: 1%;
+    margin: 5px 0;
+    background: #1b1b1b;
+    color: #ffffff;
+    border-radius: 5px;
+}
+
+code {
+    padding: 4px;
+    background: #1b1b1b;
+    color: #ffffff;
+    border-radius: 5px;
+}
+
+
 /*
 
 针对大屏幕设备

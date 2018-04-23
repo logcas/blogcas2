@@ -5,35 +5,49 @@ function getTags() {
     return queryFunc(query);
 }
 
-function getComments(postID,page) {
+function getComments(postID, page) {
     var queryStart = 0;
     var querySum = 5;
     var query = '';
-    if(postID!='') {
-        queryStart = (page-1)*querySum;
+    if (postID != '') {
+        queryStart = (page - 1) * querySum;
         query = `select * from comments where postID=${postID} order by id desc limit ${queryStart},${querySum};`;
     } else {
         querySum = 10;
-        queryStart = (page-1)*querySum;
+        queryStart = (page - 1) * querySum;
         query = `select * from comments order by id desc limit ${queryStart},${querySum};`;
     }
     return queryFunc(query);
 }
 
-function getPosts(start, sum) {
+function getPosts(start, sum, isPrivate) {
     var queryStart = start || 0;
     var querySum = sum || 10;
-    var query = `select * from posts order by id desc limit ${queryStart},${querySum};`;
+    var query = '';
+    if (typeof isPrivate == 'number') {
+        console.log('private');
+        query = `select * from posts where isPrivate = ${isPrivate} order by id desc limit ${queryStart},${querySum};`;
+    } else {
+        query = `select * from posts order by id desc limit ${queryStart},${querySum};`;
+    }
     return queryFunc(query);
 }
 
-function getPostsByTag(tagName, offset) {
+function getPostsByTag(tagName, offset, isPrivate) {
     var query = '';
-    if (offset) {
-        query = `select * from posts where tags like '%${tagName}%' order by id desc limit ${offset},5`;
-        return queryFunc(query);
+    if (typeof isPrivate == 'number') {
+        if (offset) {
+            query = `select * from posts where tags like '%${tagName}%' and isPrivate = ${isPrivate} order by id desc limit ${offset},5`;
+            return queryFunc(query);
+        }
+        query = `select * from posts where tags like '%${tagName}%' and isPrivate = ${isPrivate} order by id desc`;
+    } else {
+        if (offset) {
+            query = `select * from posts where tags like '%${tagName}%' order by id desc limit ${offset},5`;
+            return queryFunc(query);
+        }
+        query = `select * from posts where tags like '%${tagName}%' order by id desc`;
     }
-    query = `select * from posts where tags like '%${tagName}%' order by id desc`;
     return queryFunc(query);
 }
 
@@ -125,8 +139,18 @@ function getPost(id) {
     return queryFunc(query);
 }
 
-function getSum(table) {
-    var query = `select count(*) as sum from ${table}`;
+function getID(table) {
+    var query = `select max(id) as id from ${table}`;
+    return queryFunc(query);
+}
+
+function getSum(table, id) {
+    var query = '';
+    if (typeof id == 'number') {
+        query = `select count(*) as sum from ${table} where postid = ${id}`;
+    } else {
+        query = `select count(*) as sum from ${table}`;
+    }
     return queryFunc(query);
 }
 
@@ -187,7 +211,7 @@ function queryFunc(query) {
     });
 }
 
-function deleteSome(table,params) {
+function deleteSome(table, params) {
     return new Promise((resolve, reject) => {
         var connection = mysql.createConnection({
             host: 'localhost',
@@ -227,5 +251,6 @@ module.exports = {
     getPostsByTag: getPostsByTag,
     getSumByTag: getSumByTag,
     editPost: editPost,
-    deleteSome: deleteSome
+    deleteSome: deleteSome,
+    getID: getID
 }

@@ -46,7 +46,8 @@
             url: '/api/getpostlist',
             type: 'GET',
             data: {
-                page: 1
+                page: 1,
+                isPrivate:0
             },
             dataType: 'json',
             success: function (data) {
