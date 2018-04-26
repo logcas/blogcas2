@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block main %}
+<span id="post-id" style="display:none">{{ post.id }}</span>
+<div class="card">
+    <div class="card-header">{{ post.title }}</div>
+    <div class="card-body">
+        <span class="date">{{ post.publishDate }}</span>
+        <div class="tags">
+            {% for t in post.tags %}
+            <span class="tag"><a href="/tags">{{ t }}</a></span>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="card-body">
+        <p><code>本文章目前仅存在于草稿箱中，外部无法浏览，当前页面仅供预览</code></p>
+        {{ post.content | safe }}
+    </div>
+</div>
+<script src="/js/article.js"></script>
+{% endblock %}

@@ -40,25 +40,29 @@
                     }
                 }
                 console.log(deleteArr);
-                $.ajax({
-                    url: '/api/deletecomments',
-                    type: 'POST',
-                    data: {
-                        arr: deleteArr.slice(0)
-                    },
-                    dataType: 'json',
-                    success: function (data) {
-                        if (data.done) {
-                            alert('删除成功！');
-                            window.location.reload();
-                        } else {
-                            alert('删除失败');
+                if (deleteArr.length != 0) {
+                    $.ajax({
+                        url: '/api/deletecomments',
+                        type: 'POST',
+                        data: {
+                            arr: deleteArr.slice(0)
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.done) {
+                                alert('删除成功！');
+                                window.location.reload();
+                            } else {
+                                alert('删除失败');
+                            }
+                        }, error: function () {
+                            console.log('删除请求失败');
+                            alert('删除请求失败');
                         }
-                    }, error: function () {
-                        console.log('删除请求失败');
-                        alert('删除请求失败');
-                    }
-                });
+                    });
+                } else {
+                    alert('请选择需要删除的对象');
+                }
             }
 
         });

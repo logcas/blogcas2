@@ -4,6 +4,7 @@
     var totalPage = 1;
     var tagArr = []; // 保存标签信息
     var currentTag = null;
+    var privateBox = [];
 
     window.onload = function () {
 
@@ -60,42 +61,47 @@
                     });
                 }
             }
-            
-            if(e.target.value == '删除文章') {
+
+            if (e.target.value == '删除文章') {
                 var posts = document.querySelectorAll('input[name="posts"]');
                 var len = posts.length;
                 var deleteArr = [];
-                for(let i=0;i<len;i++) {
-                    if(posts[i].checked) {
+                for (let i = 0; i < len; i++) {
+                    if (posts[i].checked) {
                         deleteArr.push(Number(posts[i].value));
                     }
                 }
                 console.log(deleteArr);
-                $.ajax({
-                    url:'/api/deleteposts',
-                    type:'POST',
-                    data:{
-                        arr:deleteArr.slice(0)
-                    },
-                    dataType:'json',
-                    success:function(data){
-                        if(data.done) {
-                            alert('删除成功！');
-                            window.location.reload();
-                        } else {
-                            alert('删除失败');
+                if (deleteArr.length != 0) {
+                    $.ajax({
+                        url: '/api/deleteposts',
+                        type: 'POST',
+                        data: {
+                            arr: deleteArr.slice(0)
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.done) {
+                                alert('删除成功！');
+                                window.location.reload();
+                            } else {
+                                alert('删除失败');
+                            }
+                        }, error: function () {
+                            console.log('删除请求失败');
+                            alert('删除请求失败');
                         }
-                    },error:function(){
-                        console.log('删除请求失败');
-                        alert('删除请求失败');
-                    }
-                });
+                    });
+                } else {
+                    alert('请选择需要删除的对象');
+                }
+
             }
 
         });
     }
 
-    function createTableRow(title, id, date, isPrivate) {
+    function createTableRow(title, id, date, isPrivate,content) {
         var trow = document.createElement('tr'),
             tdSelect = document.createElement('td'),
             tdTitle = document.createElement('td'),
@@ -115,9 +121,11 @@
             tdTitleLink.appendChild(document.createTextNode(title));
             tdTitle.appendChild(tdTitleLink);
         } else if (isPrivate == 1) {
-            var tdTitleText = document.createElement('strong');
-            tdTitleText.innerHTML = '【草稿】' + title;
-            tdTitle.appendChild(tdTitleText);
+            var tdTitleLink = document.createElement('a');
+            tdTitleLink.href = `/private/${id}`;
+            tdTitleLink.innerHTML = `<strong>【草稿】${title}</strong>`;
+            tdTitleLink.target = '_blank';
+            tdTitle.appendChild(tdTitleLink);
         }
 
         tdEditLink.href = `/admin/edit?id=${id}`;
@@ -235,7 +243,7 @@
 
                 // 加入新的文章
                 data.forEach((row) => {
-                    tbody.appendChild(createTableRow(row.title, row.id, row.publishDate, row.isPrivate));
+                    tbody.appendChild(createTableRow(row.title, row.id, row.publishDate, row.isPrivate, row.content));
                 });
             },
             error: function () {

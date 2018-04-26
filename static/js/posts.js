@@ -29,12 +29,6 @@
                 totalPage = parseInt(sum / 11) + 1;
                 document.querySelector('#current').innerHTML = currentPage;
                 document.querySelector('#total').innerHTML = totalPage;
-                document.querySelector('a[href="#pre"]').style.display = 'none';
-                if (currentPage == totalPage) {
-                    document.querySelector('a[href="#next"]').style.display = 'none';
-                } else {
-                    document.querySelector('a[href="#next"]').style.display = 'inline-block';
-                }
             },
             error: function () {
                 console.log('请求页面时发生错误');
@@ -67,21 +61,23 @@
 
         // 翻页按钮事件处理程序
         $('a[href="#pre"]').click((e) => {
-            insertPostsList(--currentPage);
-            document.querySelector('#current').innerHTML = currentPage;
-            if (currentPage == 1) {
-                document.querySelector('a[href="#pre"]').style.display = 'none';
+            if(currentPage != 1) {
+                insertPostsList(--currentPage);
+                document.querySelector('#current').innerHTML = currentPage;
+            } else {
+                alert('这是第一页了！');
             }
-            document.querySelector('a[href="#next"]').style.display = 'inline-block';
+            
         });
         
         $('a[href="#next"]').click((e) => {
-            insertPostsList(++currentPage);
-            document.querySelector('#current').innerHTML = currentPage;
-            if (currentPage == totalPage) {
-                document.querySelector('a[href="#next"]').style.display = 'none';
+            if(currentPage < totalPage) {
+                insertPostsList(++currentPage);
+                document.querySelector('#current').innerHTML = currentPage;
+            } else {
+                alert('已经是最后一页了');
             }
-            document.querySelector('a[href="#pre"]').style.display = 'inline-block';
+            
         });
 
     };
