@@ -9,5 +9,28 @@
     "marked": "^0.3.19",
     "mysql": "^2.15.0",
     "nunjucks": "^3.1.2"
-  }
+  },
+  "name": "blogcas2",
+  "description": "基于 Koa 和 Mysql 的个人博客系统",
+  "version": "1.0.0",
+  "main": "app.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/logcas/blogcas2.git"
+  },
+  "keywords": [
+    "koa",
+    "mysql",
+    "blog"
+  ],
+  "author": "Lucas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/logcas/blogcas2/issues"
+  },
+  "homepage": "https://github.com/logcas/blogcas2#readme"
 }
