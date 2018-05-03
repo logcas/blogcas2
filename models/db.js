@@ -1,241 +1,156 @@
 var mysql = require('mysql');
+var config = require('../config/default');
 
-function getTags() {
-    var query = 'select tags from posts';
-    return queryFunc(query);
-}
+var pool = mysql.createPool({
+    host: config.database.HOST,
+    user: config.database.USER,
+    password: config.database.PASSWORD,
+    database: config.database.DATABASE_NAME
+});
 
-function getComments(postID, page) {
-    var queryStart = 0;
-    var querySum = 5;
-    var query = '';
-    if (postID != '') {
-        queryStart = (page - 1) * querySum;
-        query = `select * from comments where postID=${postID} order by id desc limit ${queryStart},${querySum};`;
-    } else {
-        querySum = 10;
-        queryStart = (page - 1) * querySum;
-        query = `select * from comments order by id desc limit ${queryStart},${querySum};`;
-    }
-    return queryFunc(query);
-}
-
-function getPosts(start, sum, isPrivate) {
-    var queryStart = start || 0;
-    var querySum = sum || 10;
-    var query = '';
-    if (typeof isPrivate == 'number') {
-        console.log('private');
-        query = `select * from posts where isPrivate = ${isPrivate} order by id desc limit ${queryStart},${querySum};`;
-    } else {
-        query = `select * from posts order by id desc limit ${queryStart},${querySum};`;
-    }
-    return queryFunc(query);
-}
-
-function getPostsByTag(tagName, offset, isPrivate) {
-    var query = '';
-    if (typeof isPrivate == 'number') {
-        if (offset) {
-            query = `select * from posts where tags like '%${tagName}%' and isPrivate = ${isPrivate} order by id desc limit ${offset},5`;
-            return queryFunc(query);
-        }
-        query = `select * from posts where tags like '%${tagName}%' and isPrivate = ${isPrivate} order by id desc`;
-    } else {
-        if (offset) {
-            query = `select * from posts where tags like '%${tagName}%' order by id desc limit ${offset},5`;
-            return queryFunc(query);
-        }
-        query = `select * from posts where tags like '%${tagName}%' order by id desc`;
-    }
-    return queryFunc(query);
-}
-
-function getAdmin() {
-    var query = 'select * from admin;';
-    return queryFunc(query);
-}
-
-function addPost(params) {
-    return new Promise((resolve, reject) => {
-        var connection = mysql.createConnection({
-            host: 'localhost',
-            user: 'root',
-            password: '3321666',
-            database: 'blogcas'
-        });
-        connection.connect((err) => {
-            if (err) {
-                console.log(err);
-                throw new Error('连接数据库时出错');
+// query function
+function query(query,values){
+    return new Promise((resolve,reject)=>{
+        pool.getConnection((err,connection)=>{
+            if(err) {
+                reject(new Error(err.message));
             }
-            connection.query('INSERT INTO posts(id,title,content,tags,publishDate,isPrivate) VALUES(?,?,?,?,?,?)'
-                , params
-                , function (err, result, fields) {
-                    if (err) {
-                        console.log(err);
-                        throw new Error('插入失败');
-                    }
-                    resolve(true);
-                });
-        });
-    });
-}
-
-function addComment(params) {
-    return new Promise((resolve, reject) => {
-        var connection = mysql.createConnection({
-            host: 'localhost',
-            user: 'root',
-            password: '3321666',
-            database: 'blogcas'
-        });
-        connection.connect((err) => {
-            if (err) {
-                console.log(err);
-                throw new Error('连接数据库时出错');
-            }
-            connection.query('INSERT INTO comments(postid,posttitle,id,username,content,email,publishdate) VALUES(?,?,?,?,?,?,?)'
-                , params
-                , function (err, result, fields) {
-                    if (err) {
-                        console.log(err);
-                        throw new Error('插入失败');
-                    }
-                    resolve(true);
-                });
-        });
-    });
-}
-
-function testMysql(params) {
-    return new Promise((resolve, reject) => {
-        var connection = mysql.createConnection({
-            host: 'localhost',
-            user: 'root',
-            password: '3321666',
-            database: 'blogcas'
-        });
-        connection.connect((err) => {
-            if (err) {
-                console.log(err);
-                throw new Error('连接数据库时出错');
-            }
-            connection.query('INSERT INTO test(id,text) VALUES(?,?)'
-                , params
-                , function (err, result, fields) {
-                    if (err) {
-                        console.log(err);
-                        throw new Error('插入失败');
-                    }
-                    resolve(true);
-                });
-        });
-    });
-}
-
-function getPost(id) {
-    var query = `select * from posts where id=${id};`;
-    return queryFunc(query);
-}
-
-function getID(table) {
-    var query = `select max(id) as id from ${table}`;
-    return queryFunc(query);
-}
-
-function getSum(table, id) {
-    var query = '';
-    if (typeof id == 'number') {
-        query = `select count(*) as sum from ${table} where postid = ${id}`;
-    } else {
-        query = `select count(*) as sum from ${table}`;
-    }
-    return queryFunc(query);
-}
-
-function getSumByTag(tagName) {
-    var query = `select count(*) as sum from posts where tags like '%${tagName}%'`;
-    return queryFunc(query);
-}
-
-function editPost(params) {
-    return new Promise((resolve, reject) => {
-        var connection = mysql.createConnection({
-            host: 'localhost',
-            user: 'root',
-            password: '3321666',
-            database: 'blogcas'
-        });
-        connection.connect((err) => {
-            if (err) {
-                console.log(err);
-                throw new Error('连接数据库时出错');
-            }
-            connection.query('UPDATE posts set title = ?,content = ?,tags = ?,isPrivate = ? where id = ?'
-                , params
-                , function (err, result, fields) {
-                    if (err) {
-                        console.log(err);
-                        throw new Error('更新失败');
-                    }
-                    console.log(result);
-                    resolve(true);
-                });
-        });
-    });
-}
-
-function queryFunc(query) {
-    return new Promise((resolve, reject) => {
-        var connection = mysql.createConnection({
-            host: 'localhost',
-            user: 'root',
-            password: '3321666',
-            database: 'blogcas'
-        });
-        connection.connect((err) => {
-            if (err) {
-                console.log(err);
-                throw new Error('连接数据库时出错');
-            }
-            connection.query(query, (err, rows, fields) => {
-                connection.end();
-                if (err) {
-                    console.log(err);
-                    throw (new Error('查询出错'));
+            connection.query(query,values,(err,result,fields)=>{
+                if(err) {
+                    reject(new Error(err.message));
                 }
-                resolve(rows);
+                connection.release();
+                resolve(result);
             });
         });
     });
 }
 
+// 获取所有标签
+function getTags() {
+    var sqlquery = 'select tags from posts';
+    return query(sqlquery);
+}
+
+// 获取评论
+function getComments(postID, page) {
+    var queryStart = 0;
+    var querySum = 5;
+    var sqlquery = '';
+    var values = [];
+    if (postID != '') { // 按文章获取评论
+        queryStart = (page - 1) * querySum;
+        sqlquery = 'select * from comments where postID = ? order by id desc limit ?,?;';
+        values.push(postID,queryStart,querySum);
+    } else { // 获取所有评论
+        querySum = 10;
+        queryStart = (page - 1) * querySum;
+        sqlquery = `select * from comments order by id desc limit ?,?;`;
+        values.push(queryStart,querySum);
+    }
+    return query(sqlquery,values);
+}
+
+// 获取所有文章
+function getPosts(start, sum, isPrivate) {
+    var queryStart = start || 0;
+    var querySum = sum || 10;
+    var sqlquery = '';
+    var values = [];
+    if (typeof isPrivate == 'number') {
+        console.log('private');
+        sqlquery = `select * from posts where isPrivate = ? order by id desc limit ?,?;`;
+        values.push(isPrivate,queryStart,querySum);
+    } else {
+        sqlquery = `select * from posts order by id desc limit ?,?;`;
+        values.push(queryStart,querySum);
+    }
+    return query(sqlquery,values);
+}
+
+// 按标签获取文章 bugs
+function getPostsByTag(tagName, offset, isPrivate) {
+    var sqlquery = '';
+    var values = [];
+    if (typeof isPrivate == 'number') {
+        if (offset) {
+            sqlquery = `select * from posts where tags like ? and isPrivate = ? order by id desc limit ?,5`;
+            values.push(`%${tagName}%`,isPrivate,offset);
+            return query(sqlquery,values);
+        }
+        sqlquery = `select * from posts where tags like ? and isPrivate = ? order by id desc`;
+        values.push(`%${tagName}%`,isPrivate);
+    } else {
+        if (offset) {
+            query = `select * from posts where tags like ? order by id desc limit ?,5`;
+            return query(sqlquery,[`%${tagName}%`,offset]);
+        }
+        sqlquery = `select * from posts where tags like ? order by id desc`;
+        values.push(`%${tagName}%`);
+    }
+    return query(sqlquery,values);
+}
+
+// 获取管理员
+function getAdmin() {
+    var sqlquery = 'select * from admin;';
+    return query(sqlquery);
+}
+
+// 增加文章
+function addPost(values) {
+    var sqlquery = 'INSERT INTO posts(id,title,content,tags,publishDate,isPrivate) VALUES(?,?,?,?,?,?)';
+    return query(sqlquery,values);
+}
+
+// 增加评论
+function addComment(values) {
+    var sqlquery = 'INSERT INTO comments(postid,posttitle,id,username,content,email,publishdate) VALUES(?,?,?,?,?,?,?)';
+    return query(sqlquery,values);
+}
+
+// 根据文章ID获取文章
+function getPost(id) {
+    var sqlquery = `select * from posts where id=?;`;
+    return query(sqlquery,[id]);
+}
+
+// 获取最新的ID(评论ID或文章ID)
+function getID(table) {
+    var sqlquery = `select max(id) as id from ??`;
+    return query(sqlquery,[table]);
+}
+
+// 获取数量
+function getSum(table, id) {
+    var sqlquery = '';
+    var values = [];
+    if (typeof id == 'number') {
+        sqlquery = `select count(*) as sum from ?? where postid = ?`;
+        values.push(table,id);
+    } else {
+        sqlquery = `select count(*) as sum from ??`;
+        values.push(table);
+    }
+    return query(sqlquery,values);
+}
+
+// 通过标签-获取文章数量
+function getSumByTag(tagName) {
+    var sqlquery = `select count(*) as sum from posts where tags like '%?%'`;
+    return query(sqlquery,[tagName]);
+}
+
+// 修改文章
+function editPost(values) {
+    var sqlquery = 'UPDATE posts set title = ?,content = ?,tags = ?,isPrivate = ? where id = ?';
+    return query(sqlquery,values);
+}
+
+// 删除文章或评论
 function deleteSome(table, params) {
-    return new Promise((resolve, reject) => {
-        var connection = mysql.createConnection({
-            host: 'localhost',
-            user: 'root',
-            password: '3321666',
-            database: 'blogcas'
-        });
-        connection.connect((err) => {
-            if (err) {
-                console.log(err);
-                throw new Error('连接数据库时出错');
-            }
-            connection.query(`delete from ${table} where id in ${params}`
-                , function (err, result, fields) {
-                    if (err) {
-                        console.log(err);
-                        throw new Error('删除失败');
-                    }
-                    console.log(result);
-                    console.log('删除成功');
-                    resolve(true);
-                });
-        });
-    });
+    var sqlquery = `delete from ?? where id in ${params}`;
+    return query(sqlquery,[table]);
 }
 
 module.exports = {
@@ -247,7 +162,6 @@ module.exports = {
     getComments: getComments,
     getTags: getTags,
     addComment: addComment,
-    testMysql: testMysql,
     getPostsByTag: getPostsByTag,
     getSumByTag: getSumByTag,
     editPost: editPost,

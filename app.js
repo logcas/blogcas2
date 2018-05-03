@@ -4,10 +4,18 @@ const staticServe = require('koa-static');
 const bodyParser = require('koa-bodyparser');
 const router = require('./router');
 const templating = require('./template');
-const session = require('koa-session2');
-const Store = require('./models/store');
+const session = require('koa-session-minimal');
+const sessionStore = require('koa-mysql-session');
+const config = require('./config/default');
 
 var isProduction = process.env.NODE_ENV === 'production';
+
+var sessionConfig = {
+    user: config.database.USER,
+    password: config.database.PASSWORD,
+    database: config.database.DATABASE_NAME,
+    host: config.database.HOST,
+};
 
 app.use(async (ctx, next) => {
     const start = Date.now();
@@ -26,7 +34,8 @@ app.use(async (ctx, next) => {
 
 
 app.use(session({
-    store: new Store()
+    key: 'USER_SID',
+    store: new sessionStore(sessionConfig)
 }));
 
 app.use(staticServe(__dirname + '/static'));

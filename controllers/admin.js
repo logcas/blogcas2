@@ -44,9 +44,14 @@ async function editPost(ctx, next) {
     var sum = (await db.getSum('posts'))[0].sum;
     if (id <= sum) {
         var post = (await db.getPost(id))[0];
-            ctx.render('admin-edit.html', {
-                pagename: '编辑文章',
-                post:post
+        await db.getPost(id)
+            .then((data) => {
+                ctx.render('admin-edit.html', {
+                    pagename: '编辑文章',
+                    post: data[0]
+                });
+            }).catch((err) => {
+                ctx.body = err.message;
             });
     } else {
         ctx.redirect('/');
@@ -86,8 +91,8 @@ module.exports = {
         func: logout
     },
     editPost: {
-        method:'GET',
-        url:'/admin/edit',
-        func:editPost
+        method: 'GET',
+        url: '/admin/edit',
+        func: editPost
     }
 }
