@@ -1,0 +1,87 @@
+{% extends "admin-base.html" %} {% block main %}
+<div class="panel">
+    <div class="panel-header">设置</div>
+    <div class="panel-body">
+        <form>
+            <div class="form-group">
+                <label for="title">网站标题</label>
+                <input type="text" class="form-control" name="title" value="{{info.title}}">
+            </div>
+            <div class="form-group">
+                <label for="description">网站简介</label>
+                <input type="text" class="form-control" name="description" value="{{info.description}}">
+            </div>
+            <div class="form-group">
+                <label for="tags">评论限制（当前:{% if info.setting.openComment %}开放评论 {% else %} 限制评论 {% endif %}）</label>
+                <select name="open-comment">
+                    <option value="T">开放评论，不需要审核</option>
+                    <option value="F">限制评论，需要审核</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="introduction">个人介绍</label>
+                <textarea class="form-control" name="introduction" style="height:100px">{{info.introduction}}</textarea>
+            </div>
+            <input type="button" class="btn" value="保存设置">
+        </form>
+    </div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/3.3.0/jquery.min.js"></script>
+<script>
+    (function () {
+
+        function checkValid() {
+            if ($('input[name="title"]').val() == '') {
+                alert('博客名不能为空！');
+                return false;
+            }
+            return true;
+        }
+
+        window.onload = function () {
+
+            $('input[value="保存设置"]').click(function (e) {
+                if (checkValid()) {
+
+                    var openComment = true;
+                    var selectBox = document.forms[0].elements['open-comment'];
+                    if (selectBox.options[0].selected) {
+                        openComment = true;
+                    } else {
+                        openComment = false;
+                    }
+
+                    $.ajax({
+                        url: '/api/savesetting',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            setting: {
+                                title: $('input[name="title"]').val(),
+                                description: $('input[name="description"]').val(),
+                                setting: {
+                                    openComment: openComment
+                                },
+                                introduction: $('textarea[name="introduction"]').val()
+                            }
+
+                        },
+                        success: (data) => {
+                            if (data.done) {
+                                alert('保存成功')
+                            } else {
+                                alert('保存失败')
+                            }
+                        },
+                        error: (err) => {
+                            alert(err.message);
+                        }
+                    });
+
+                }
+            })
+
+        }
+
+    })()
+</script> {% endblock %}

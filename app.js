@@ -2,8 +2,8 @@ var Koa = require('koa');
 const app = new Koa();
 const staticServe = require('koa-static');
 const bodyParser = require('koa-bodyparser');
-const router = require('./router');
-const templating = require('./template');
+const router = require('./middlewares/router');
+const templating = require('./middlewares/template');
 const session = require('koa-session-minimal');
 const sessionStore = require('koa-mysql-session');
 const config = require('./config/default');
@@ -41,8 +41,10 @@ app.use(session({
 app.use(staticServe(__dirname + '/static'));
 
 app.use(bodyParser());
+
 app.use(templating({
     noCache:!isProduction
 }));
+
 app.use(router());
 app.listen(8080);

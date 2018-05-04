@@ -1,4 +1,5 @@
 const db = require('../models/db');
+var getInfo = require('../models/setting');
 
 async function admin(ctx, next) {
     if (!ctx.session.admin) {
@@ -59,6 +60,17 @@ async function editPost(ctx, next) {
 
 }
 
+async function setting(ctx,next) {
+    if (!ctx.session.admin) {
+        ctx.redirect('/');
+    }
+    var info = getInfo();
+    ctx.render('admin-setting.html',{
+        pagename:'设置',
+        info:info
+    });
+}
+
 async function logout(ctx, next) {
     ctx.session.admin = false;
     ctx.body = '已登出';
@@ -94,5 +106,10 @@ module.exports = {
         method: 'GET',
         url: '/admin/edit',
         func: editPost
+    },
+    setting: {
+        method: 'GET',
+        url: '/admin/setting',
+        func: setting
     }
 }

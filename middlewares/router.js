@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 
 function addMapping(router,mappings){
     for(var key in mappings){
@@ -24,7 +25,7 @@ function readFiles(dir){
 
 function addRouters(files,router,dir){
     files.forEach(mapping =>{
-        let mappings = require(__dirname + dir + mapping);
+        let mappings = require(__dirname + '/../'+dir + mapping);
         addMapping(router,mappings);
     });
 }
@@ -32,7 +33,7 @@ function addRouters(files,router,dir){
 module.exports = function(dirname){
     var dir = dirname || '/controllers/';
     var router = require('koa-router')();
-    var files = readFiles(__dirname + dir);
+    var files = readFiles(path.join(__dirname,'/../',dir));
     addRouters(files,router,dir);
     return router.routes();
 }

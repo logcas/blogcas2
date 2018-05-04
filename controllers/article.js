@@ -1,5 +1,6 @@
 const db = require('../models/db');
 const marked = require('marked');
+var getInfo = require('../models/setting');
 
 async function index(ctx, next) {
     var id = ctx.params.id;
@@ -11,9 +12,11 @@ async function index(ctx, next) {
         }
         post.tags = post.tags.split(',');
         post.content = marked(post.content);
+        var info = getInfo();
         ctx.render('article.html', {
             pagename: post.title,
             post: post,
+            webname: info.title
         });
     } else {
         ctx.body = '文章不存在';
@@ -31,9 +34,11 @@ async function privatePost(ctx, next) {
             }
             post.tags = post.tags.split(',');
             post.content = marked(post.content);
+            var info = getInfo();
             ctx.render('article-private.html', {
                 pagename: '草稿箱：' + post.title,
                 post: post,
+                webname: info.title
             });
         } else {
             ctx.body = '文章不存在';

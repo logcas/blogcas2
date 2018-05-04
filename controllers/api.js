@@ -9,13 +9,13 @@ async function publishComment(ctx, next) {
     var date = getDate();
     var id = null;
     await db.getID('comments')
-    .then((data)=>{
-        id = data[0].id + 1;
-    })
-    .catch((err)=>{
-        console.log(err.message);
-        ctx.body = { done: false };
-    });
+        .then((data) => {
+            id = data[0].id + 1;
+        })
+        .catch((err) => {
+            console.log(err.message);
+            ctx.body = { done: false };
+        });
     postID = parseInt(postID);
     var params = [postID, postTitle, id, username, content, email, date];
     console.log(params);
@@ -203,13 +203,13 @@ async function publishPost(ctx, next) {
         ctx.request.body.isPrivate
     ];
     await db.addPost(params)
-    .then((data)=>{
-        ctx.body = {done: true};
-    })
-    .catch((err)=>{
-        ctx.body = {done:false,err:err.message};
-        console.log(err.message);
-    });
+        .then((data) => {
+            ctx.body = { done: true };
+        })
+        .catch((err) => {
+            ctx.body = { done: false, err: err.message };
+            console.log(err.message);
+        });
 }
 
 // 修改文章/修改草稿请求
@@ -222,12 +222,12 @@ async function editPost(ctx, next) {
         ctx.request.body.id
     ];
     await db.editPost(params)
-    .then((data)=>{
-        ctx.body = {done: true};
-    })
-    .catch((err)=>{
-        ctx.body = {done: false};
-    });
+        .then((data) => {
+            ctx.body = { done: true };
+        })
+        .catch((err) => {
+            ctx.body = { done: false };
+        });
 }
 
 // 删除文章
@@ -235,13 +235,13 @@ async function deletePosts(ctx, next) {
     var postids = '(' + ctx.request.body.arr.join(',') + ')';
     console.log(postids);
     await db.deleteSome('posts', postids)
-    .then((data)=>{
-        ctx.body = {done: true};
-    })
-    .catch((err)=>{
-        console.log(err.message);
-        ctx.body = {done: false};
-    });
+        .then((data) => {
+            ctx.body = { done: true };
+        })
+        .catch((err) => {
+            console.log(err.message);
+            ctx.body = { done: false };
+        });
 }
 
 // 删除评论
@@ -249,12 +249,25 @@ async function deleteComments(ctx, next) {
     var commentids = '(' + ctx.request.body.arr.join(',') + ')';
     console.log(commentids);
     await db.deleteSome('comments', commentids)
-    .then((data)=>{
-        ctx.body = {done: true};
-    })
-    .catch((err)=>{
-        ctx.body = {done: false};
-    });
+        .then((data) => {
+            ctx.body = { done: true };
+        })
+        .catch((err) => {
+            ctx.body = { done: false };
+        });
+}
+
+// 保存配置
+async function saveSetting(ctx, next) {
+    var setting = ctx.request.body.setting;
+    var fs = require('mz/fs');
+    var path = require('path');
+    try {
+        fs.writeFileSync(path.join(__dirname, '../', '/config/info.json'), JSON.stringify(setting));
+        ctx.body = { done: true }
+    } catch (e) {
+        ctx.body = { done: false }
+    }
 }
 
 module.exports = {
@@ -317,5 +330,10 @@ module.exports = {
         method: 'POST',
         url: '/api/deletecomments',
         func: deleteComments
+    },
+    saveSetting: {
+        method: 'POST',
+        url: '/api/savesetting',
+        func: saveSetting
     }
 }
