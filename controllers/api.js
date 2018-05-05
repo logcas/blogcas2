@@ -1,11 +1,13 @@
 const getDate = require('../models/date');
 const db = require('../models/db');
+const config = require('../models/setting');
 
 // api
 
 // 提交评论
 async function publishComment(ctx, next) {
     var { username, email, content, postID, postTitle } = ctx.request.body;
+    var ispublish = config().setting.openComment ? 1 : 0;
     var date = getDate();
     var id = null;
     await db.getID('comments')
@@ -17,7 +19,7 @@ async function publishComment(ctx, next) {
             ctx.body = { done: false };
         });
     postID = parseInt(postID);
-    var params = [postID, postTitle, id, username, content, email, date];
+    var params = [postID, postTitle, id, username, content, email, date, ispublish];
     console.log(params);
     await db.addComment(params)
         .then((data) => {

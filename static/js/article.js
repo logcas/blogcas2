@@ -91,7 +91,6 @@
                         content: content,
                         postID: postID,
                         postTitle: postTitle,
-                        ispublish: 0
                     },
                     success: function (data) {
                         if (data.done) {

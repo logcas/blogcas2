@@ -149,7 +149,7 @@ function addPost(values) {
 
 // 增加评论
 function addComment(values) {
-    var sqlquery = 'INSERT INTO comments(postid,posttitle,id,username,content,email,publishdate) VALUES(?,?,?,?,?,?,?)';
+    var sqlquery = 'INSERT INTO comments(postid,posttitle,id,username,content,email,publishdate,ispublish) VALUES(?,?,?,?,?,?,?,?)';
     return query(sqlquery,values);
 }
 
