@@ -32,7 +32,7 @@ function getTags() {
     return query(sqlquery);
 }
 
-// 获取评论
+// 获取所有评论（包含未审核的、已审的）
 function getComments(postID, page) {
     var queryStart = 0;
     var querySum = 5;
@@ -49,6 +49,50 @@ function getComments(postID, page) {
         values.push(queryStart,querySum);
     }
     return query(sqlquery,values);
+}
+
+// 获取已审核的评论
+function getPublishComment(postID,page){
+    var queryStart = 0;
+    var querySum = 5;
+    var sqlquery = '';
+    var values = [];
+    if (postID != '') { // 按文章获取评论
+        queryStart = (page - 1) * querySum;
+        sqlquery = 'select * from comments where postID = ? and ispublish = 1 order by id desc limit ?,?;';
+        values.push(postID,queryStart,querySum);
+    } else { // 获取所有评论
+        querySum = 10;
+        queryStart = (page - 1) * querySum;
+        sqlquery = `select * from comments where ispublish = 1 order by id desc limit ?,?;`;
+        values.push(queryStart,querySum);
+    }
+    return query(sqlquery,values);
+}
+
+// 获取未审核的评论
+function getUnpublishComment(postID,page){
+    var queryStart = 0;
+    var querySum = 5;
+    var sqlquery = '';
+    var values = [];
+    if (postID != '') { // 按文章获取评论
+        queryStart = (page - 1) * querySum;
+        sqlquery = 'select * from comments where postID = ? and ispublish = 0 order by id desc limit ?,?;';
+        values.push(postID,queryStart,querySum);
+    } else { // 获取所有评论
+        querySum = 10;
+        queryStart = (page - 1) * querySum;
+        sqlquery = `select * from comments where ispublish = 0 order by id desc limit ?,?;`;
+        values.push(queryStart,querySum);
+    }
+    return query(sqlquery,values);
+}
+
+// 审核\关闭评论
+function checkComments(id,isPublish){
+    var sqlquery = `UPDATE comments set ispublish = ? where id in ${id}`;
+    return query(sqlquery,[isPublish]);
 }
 
 // 获取所有文章
@@ -137,8 +181,8 @@ function getSum(table, id) {
 
 // 通过标签-获取文章数量
 function getSumByTag(tagName) {
-    var sqlquery = `select count(*) as sum from posts where tags like '%?%'`;
-    return query(sqlquery,[tagName]);
+    var sqlquery = `select count(*) as sum from posts where tags like '%${tagName}%'`;
+    return query(sqlquery);
 }
 
 // 修改文章
@@ -166,5 +210,8 @@ module.exports = {
     getSumByTag: getSumByTag,
     editPost: editPost,
     deleteSome: deleteSome,
-    getID: getID
+    getID: getID,
+    getPublishComment: getPublishComment,
+    getUnpublishComment: getUnpublishComment,
+    checkComments: checkComments
 }

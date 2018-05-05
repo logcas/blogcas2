@@ -14,8 +14,13 @@
             <div class="form-group">
                 <label for="tags">评论限制（当前:{% if info.setting.openComment %}开放评论 {% else %} 限制评论 {% endif %}）</label>
                 <select name="open-comment">
+                    {% if info.setting.openComment %}
                     <option value="T">开放评论，不需要审核</option>
                     <option value="F">限制评论，需要审核</option>
+                    {% else %}
+                    <option value="T">开放评论，不需要审核</option>
+                    <option value="F" selected>限制评论，需要审核</option>
+                    {% endif %}
                 </select>
             </div>
             <div class="form-group">
@@ -43,6 +48,8 @@
             $('input[value="保存设置"]').click(function (e) {
                 if (checkValid()) {
 
+                    $('input[value="保存设置"]').attr('disabled','true');
+
                     var openComment = true;
                     var selectBox = document.forms[0].elements['open-comment'];
                     if (selectBox.options[0].selected) {
@@ -68,10 +75,13 @@
                         },
                         success: (data) => {
                             if (data.done) {
-                                alert('保存成功')
+                                alert('保存成功');
+                                window.location.reload();
                             } else {
-                                alert('保存失败')
+                                alert('保存失败');
+                                $('input[value="保存设置"]').attr('disabled','false');
                             }
+                            
                         },
                         error: (err) => {
                             alert(err.message);

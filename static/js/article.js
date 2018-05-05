@@ -26,7 +26,7 @@
 
         // ajax 请求评论内容
         $.ajax({
-            url: '/api/getcomments',
+            url: '/api/getpublishcomments',
             dataType: 'json',
             type: 'GET',
             data: {
@@ -39,9 +39,9 @@
                 if (len != 0) {
                     data.forEach(el => {
                         commentBoard.appendChild(createComment(el.username, el.content));
-                        // 再去请求页码信息
-                        getComments();
                     });
+                    // 再去请求页码信息
+                    getComments();
                 } else {
                     document.querySelector('#comment').style.display = 'none';
                     // 没有评论，不用再发起ajax
@@ -56,7 +56,7 @@
 
         // 翻页按钮事件处理程序
         $('a[href="#pre"]').click((e) => {
-            if(currentPage == 1){
+            if (currentPage == 1) {
                 alert('这已经是第一页了');
             } else {
                 insertCommentsList(--currentPage);
@@ -64,7 +64,7 @@
         });
 
         $('a[href="#next"]').click((e) => {
-            if(currentPage == totalPage){
+            if (currentPage == totalPage) {
                 alert('这已经是最后一页了');
             } else {
                 insertCommentsList(++currentPage);
@@ -79,28 +79,29 @@
                 email = $('input[name="email"]').val(),
                 content = $('#comment-content').val();
 
-            if(validateComment(username,email,content)){
-                
+            if (validateComment(username, email, content)) {
+
                 $.ajax({
-                    url:'/api/publishcomment',
-                    type:'POST',
-                    dataType:'json',
-                    data:{
-                        username:username,
-                        email:email,
-                        content:content,
-                        postID:postID,
-                        postTitle:postTitle
+                    url: '/api/publishcomment',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        username: username,
+                        email: email,
+                        content: content,
+                        postID: postID,
+                        postTitle: postTitle,
+                        ispublish: 0
                     },
-                    success:function(data){
-                        if(data.done){
+                    success: function (data) {
+                        if (data.done) {
                             alert('评论成功！');
                             window.location.reload();
                         } else {
                             alert('评论失败');
                         }
                     },
-                    error:function(){
+                    error: function () {
                         console.log('评论请求失败');
                         alert('评论请求失败');
                     }
@@ -115,11 +116,11 @@
     function getComments() {
         $.ajax({
             url: '/api/getSum',
-            type:'GET',
+            type: 'GET',
             dataType: 'json',
             data: {
                 table: 'comments',
-                id:postID
+                id: postID
             },
             success: function (sum) {
                 totalPage = parseInt(sum / 6) + 1;
@@ -135,7 +136,7 @@
 
     function insertCommentsList(page) {
         $.ajax({
-            url: '/api/getcomments',
+            url: '/api/getpublishcomments',
             dataType: 'json',
             type: 'GET',
             data: {
@@ -178,19 +179,19 @@
         return comment;
     }
 
-    function validateComment(username,email,content){
-        
-        if(username.trim()==''){
+    function validateComment(username, email, content) {
+
+        if (username.trim() == '') {
             alert('请输入昵称');
             return false;
         }
 
-        if(!/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/.test(email)){
+        if (!/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/.test(email)) {
             alert('请输入正确的电子邮箱');
             return false;
         }
 
-        if(content.trim()==''){
+        if (content.trim() == '') {
             alert('请输入评论内容');
             return false;
         }

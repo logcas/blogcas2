@@ -154,6 +154,48 @@ async function getComments(ctx, next) {
         });
 }
 
+// 获取已审核的评论
+async function getPublishComments(ctx, next) {
+    var postID = ctx.query.postID || '';
+    var page = ctx.query.page;
+    await db.getPublishComment(postID, page)
+        .then((data) => {
+            ctx.body = data;
+        })
+        .catch((err) => {
+            ctx.body = [];
+            console.log(err.message);
+        });
+}
+
+// 获取未审核的评论
+async function getUnpublishComments(ctx, next) {
+    var postID = ctx.query.postID || '';
+    var page = ctx.query.page;
+    await db.getUnpublishComment(postID, page)
+        .then((data) => {
+            ctx.body = data;
+        })
+        .catch((err) => {
+            ctx.body = [];
+            console.log(err.message);
+        });
+}
+
+// 审核\关闭评论
+async function checkComments(ctx, next) {
+    var isPublish = Number(ctx.request.body.ispublish);
+    var id = '(' + ctx.request.body.id.join(',') + ')';
+    await db.checkComments(id, isPublish)
+        .then((data) => {
+            ctx.body = { done: true };
+        })
+        .catch((err) => {
+            ctx.body = { done: false };
+            console.log(err.message);
+        });
+}
+
 // 获取所有标签
 async function getTags(ctx, next) {
     await db.getTags()
@@ -280,6 +322,21 @@ module.exports = {
         method: 'GET',
         url: '/api/getcomments',
         func: getComments
+    },
+    getPublishComments: {
+        method: 'GET',
+        url: '/api/getpublishcomments',
+        func: getPublishComments
+    },
+    getUnpublishComments: {
+        method: 'GET',
+        url: '/api/getunpublishcomments',
+        func: getUnpublishComments
+    },
+    checkComments: {
+        method: 'POST',
+        url: '/api/checkcomments',
+        func: checkComments
     },
     getTags: {
         method: 'GET',
