@@ -289,18 +289,39 @@ pre {
     width: 98%;
     padding: 1%;
     margin: 5px 0;
-    background: #1b1b1b;
-    color: #ffffff;
+    background: rgb(181, 214, 241);
+    color: #000000;
     border-radius: 5px;
 }
 
 code {
     padding: 4px;
-    background: #1b1b1b;
-    color: #ffffff;
+    background: rgb(181, 214, 241);
+    color: #000000;
     border-radius: 5px;
 }
 
+h1,h2,h3,h4,h5,h6,h7 {
+    margin: 0.5em 0;
+    color: #000000;
+}
+
+h1,h2,h3 {
+    border-width: 0 0 1px 0;
+    border-style: solid;
+    border-color: #64B5F6;
+}
+
+blockquote {
+    color: #000000;
+    background: rgb(169, 208, 240);
+    border-radius: 5px;
+    padding: 10px;
+}
+
+p {
+    line-height: 28px;
+}
 
 /*
 
